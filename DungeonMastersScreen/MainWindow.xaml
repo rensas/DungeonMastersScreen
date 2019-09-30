@@ -1,0 +1,16 @@
+﻿<Window x:Class="DungeonMastersScreen.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DungeonMastersScreen"
+        mc:Ignorable="d"
+        DataContext="{Binding Main, Source={StaticResource Locator}}"
+        Title="MainWindow" Height="450" Width="800">
+    <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <StackPanel x:Name="ControlBar" Orientation="Vertical" Width="60" DockPanel.Dock="Left" VerticalAlignment="Stretch">
+            <Button Content="CT" FontWeight="ExtraBold" Width="50" Height="50" HorizontalAlignment="Center" Margin="5,5,5,0" Command="{Binding NavToCombatTrackerCommand}"/>
+        </StackPanel>
+        <Frame x:Name="MainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Left" Background="LightCyan"/>
+    </DockPanel>
+</Window>
