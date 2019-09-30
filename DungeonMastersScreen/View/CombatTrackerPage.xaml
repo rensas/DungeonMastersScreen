@@ -15,14 +15,14 @@
             <converters:DispositionTypeToColorConverter x:Key="DispTypeToColorConverter"/>
         </ResourceDictionary>
     </Page.Resources>
-    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="LightPink">
+    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="LightGoldenrodYellow">
         <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Text="{Binding PageTitle}" />
         <StackPanel Orientation="Vertical" DockPanel.Dock="Left" MinWidth="250" MaxWidth="400" HorizontalAlignment="Left" Margin="15,15,0,0">
             <Label Content="Player Characters" FontWeight="Bold" FontSize="24"/>
             <ListView ItemsSource="{Binding PlayerCharacters}" x:Name="PCList">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Background" Value="{Binding DispositionToPCs, Converter={StaticResource DispTypeToColorConverter}}"/>
+                        <Setter Property="Background" Value="{Binding Model.DispositionToPCs, Converter={StaticResource DispTypeToColorConverter}}"/>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         <Setter Property="BorderBrush" Value="Gray"/>
                         <Setter Property="BorderThickness" Value="1px" />
@@ -31,8 +31,9 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <DockPanel HorizontalAlignment="Stretch" Height="40">
-                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                            <TextBlock Text="{Binding Model.Name}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" DockPanel.Dock="Left"/>
                             <Button Command="{Binding ElementName=PCList, Path=DataContext.AddPlayerCharacterCommand}" CommandParameter="{Binding}"  Content="+" FontWeight="UltraBold" FontSize="24" HorizontalAlignment="Right" Height="35" Width="35"  DockPanel.Dock="Right" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <TextBox Text="{Binding InitiativeEntry}" Width="30" FontSize="14" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
                         </DockPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -66,12 +67,12 @@
             <Button Command="{Binding AddNewCreatureCommand}" Content="Add Creature" Width="80" HorizontalAlignment="Left"/>
         </StackPanel>
         <Rectangle DockPanel.Dock="Left" VerticalAlignment="Stretch" Width="1" Margin="4,2,4,2" Stroke="Black" />
-        <StackPanel Orientation="Vertical" DockPanel.Dock="Left" MinWidth="300" MaxWidth="500" HorizontalAlignment="Left" Margin=" 45,15,0,0">
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Left" MinWidth="300" MaxWidth="600" HorizontalAlignment="Left" Margin=" 45,15,0,0">
             <Label Content="Initiative Order" FontWeight="Bold" FontSize="24"/>
-            <ListView ItemsSource="{Binding SortedInitiativeCreatures}" x:Name="InitiativeList">
+            <ListView ItemsSource="{Binding SortedInitiativeCreatures}" x:Name="InitiativeList" Width="500">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Background" Value="{Binding DispositionToPCs, Converter={StaticResource DispTypeToColorConverter}}"/>
+                        <Setter Property="Background" Value="{Binding Model.DispositionToPCs, Converter={StaticResource DispTypeToColorConverter}}"/>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         <Setter Property="BorderBrush" Value="Gray"/>
                         <Setter Property="BorderThickness" Value="1px" />
@@ -80,12 +81,20 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <DockPanel HorizontalAlignment="Stretch" Height="40">
-                            <TextBlock Text="{Binding Initiative}" FontWeight="Bold" FontSize="24" Width="35" VerticalAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Left"/>
-                            <Rectangle VerticalAlignment="Stretch" Width="1" Margin="4,2,4,2" Stroke="Black" DockPanel.Dock="Left" />
-                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-                            <TextBlock Text="{Binding CurrentHP}" Width="38" FontWeight="Bold" FontSize="24" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="0,0,5,0" />
+                            <!-- Right-docked items -->
+                            <Button Content="X" Command="{Binding ElementName=InitiativeList, Path=DataContext.RemoveCreatureFromInitiativeCommand}" CommandParameter="{Binding}" FontSize="14" FontWeight="Bold" Width="25" Height="25" Margin="2,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                            <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0,2,4,2" Stroke="Black" DockPanel.Dock="Left" />
+                            <TextBlock Text="{Binding Model.Initiative}" FontWeight="Bold" FontSize="24" Width="35" VerticalAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Left"/>
+                            <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2,2,4,2" Stroke="Black" DockPanel.Dock="Left" />
+                            <TextBlock Text="{Binding Model.Name}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+
+                            <!-- Left-Docked items -->
+                            <TextBlock Text="{Binding Model.CurrentHP}" Width="42" FontWeight="Bold" FontSize="24" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="0,0,5,0" />
                             <TextBlock Text="HP: " Width="34" FontWeight="Bold" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Right" DockPanel.Dock="Right" />
-                            <!--<Button Command="{Binding ElementName=InitiativeList, Path=DataContext.AddPlayerCharacterCommand}" CommandParameter="{Binding}"  Content="+" FontWeight="UltraBold" FontSize="24" HorizontalAlignment="Right" Height="35" Width="35"  DockPanel.Dock="Right" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
+
+                            <Button Command="{Binding HealCreatureCommand}" Content="+" VerticalContentAlignment="Top" FontSize="20" FontWeight="Bold" DockPanel.Dock="Right" Margin="0,0,60,0" Width="30" Height="30" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding HitpointsEntry}" FontSize="14" Width="30" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,10,0" />
+                            <Button Command="{Binding DamageCreatureCommand}" Content="-" VerticalContentAlignment="Top" FontSize="20" FontWeight="Bold" DockPanel.Dock="Right" Margin="0,0,10,0" Width="30" Height="30" VerticalAlignment="Center" HorizontalAlignment="Right" />
                         </DockPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>

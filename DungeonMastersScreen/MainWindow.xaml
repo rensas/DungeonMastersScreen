@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DungeonMastersScreen"
         mc:Ignorable="d"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="1024" Width="1280">
     <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel x:Name="ControlBar" Orientation="Vertical" Width="60" DockPanel.Dock="Left" VerticalAlignment="Stretch">
             <Button Content="CT" FontWeight="ExtraBold" Width="50" Height="50" HorizontalAlignment="Center" Margin="5,5,5,0" Command="{Binding NavToCombatTrackerCommand}"/>

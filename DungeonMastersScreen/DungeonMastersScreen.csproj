@@ -78,6 +78,7 @@
     <Compile Include="Model\Types\DispositionType.cs" />
     <Compile Include="Service\Implementation\FrameNavigationService.cs" />
     <Compile Include="Service\Interface\IFrameNavigationService.cs" />
+    <Compile Include="ViewModel\ChildViewModel\InitiativeCreatureViewModel.cs" />
     <Compile Include="ViewModel\CombatTrackerViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />

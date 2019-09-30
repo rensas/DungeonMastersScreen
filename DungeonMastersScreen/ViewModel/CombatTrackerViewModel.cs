@@ -1,5 +1,6 @@
 ﻿using DungeonMastersScreen.Model.Creatures;
 using DungeonMastersScreen.Model.Types;
+using DungeonMastersScreen.ViewModel.ChildViewModel;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
@@ -26,7 +27,7 @@ namespace DungeonMastersScreen.ViewModel
             _navigationService = navigationService;
             InitiableCreatures = GetInitiableCreatures();
             PlayerCharacters = GetPlayerCharacters();
-            InitiativeCreatures = new List<Creature>();
+            InitiativeCreatures = new List<InitiativeCreatureViewModel>();
 
             PageTitle = "Combat tracker page";
         }
@@ -64,8 +65,8 @@ namespace DungeonMastersScreen.ViewModel
             }
         }
 
-        private ObservableCollection<PlayerCharacter> _playerCharacters;
-        public ObservableCollection<PlayerCharacter> PlayerCharacters
+        private ObservableCollection<InitiativeCreatureViewModel> _playerCharacters;
+        public ObservableCollection<InitiativeCreatureViewModel> PlayerCharacters
         {
             get
             {
@@ -80,8 +81,8 @@ namespace DungeonMastersScreen.ViewModel
             }
         }
 
-        private List<Creature> _initiativeCreatures;
-        public List<Creature> InitiativeCreatures
+        private List<InitiativeCreatureViewModel> _initiativeCreatures;
+        public List<InitiativeCreatureViewModel> InitiativeCreatures
         {
             get
             {
@@ -168,12 +169,12 @@ namespace DungeonMastersScreen.ViewModel
             }
         }
 
-        public ObservableCollection<Creature> SortedInitiativeCreatures
+        public ObservableCollection<InitiativeCreatureViewModel> SortedInitiativeCreatures
         {
             get
             {
-                var results = InitiativeCreatures.OrderByDescending(x => x.Initiative).ToList();
-                return new ObservableCollection<Creature>(results);
+                var results = InitiativeCreatures.OrderByDescending(x => x.Model.Initiative).ToList();
+                return new ObservableCollection<InitiativeCreatureViewModel>(results);
             }
         }
 
@@ -215,7 +216,7 @@ namespace DungeonMastersScreen.ViewModel
             return creatures;
         }
 
-        private ObservableCollection<PlayerCharacter> GetPlayerCharacters()
+        private ObservableCollection<InitiativeCreatureViewModel> GetPlayerCharacters()
         {
             var pcs = new ObservableCollection<PlayerCharacter>();
             pcs.Add(new PlayerCharacter()
@@ -253,7 +254,12 @@ namespace DungeonMastersScreen.ViewModel
                 CurrentHP = 21,
                 DispositionToPCs = DispositionType.Friendly
             });
-            return pcs;
+            var pcvm = new ObservableCollection<InitiativeCreatureViewModel>();
+            foreach (PlayerCharacter pc in pcs)
+            {
+                pcvm.Add(new InitiativeCreatureViewModel() { Model = pc });
+            }
+            return pcvm;
         }
         private void AddNewCreatureToInitiative()
         {
@@ -269,7 +275,8 @@ namespace DungeonMastersScreen.ViewModel
                     CurrentHP = NewCreatureHP.Value,
                     DispositionToPCs = dispo
                 };
-                InitiativeCreatures.Add(creature);
+                InitiativeCreatureViewModel creatureVM = new InitiativeCreatureViewModel() { Model = creature };
+                InitiativeCreatures.Add(creatureVM);
                 RaisePropertyChanged("InitiativeCreatures");
                 RaisePropertyChanged("SortedInitiativeCreatures");
                 NewCreatureInitiative = null;
@@ -280,22 +287,26 @@ namespace DungeonMastersScreen.ViewModel
         }
 
         private void AddPlayerCharacterToInitiative(object state)
-        {
-            var character = state as PlayerCharacter;
-            if (!InitiativeCreatures.Contains(character))
+        { 
+            InitiativeCreatureViewModel playerVM = state as InitiativeCreatureViewModel;
+            if (!InitiativeCreatures.Contains(playerVM))
             {
                 Random rnd = new Random();
-                character.Initiative = rnd.Next(1, 25);
-                InitiativeCreatures.Add(character);
+                playerVM.Model.Initiative = playerVM.InitiativeEntry;
+                InitiativeCreatures.Add(playerVM);
                 RaisePropertyChanged("SortedInitiativeCreatures");
                 RaisePropertyChanged("InitiativeCreatures");
+
+                playerVM.InitiativeEntry = 0;
             }
         }
 
-        private void DamageCreature(object state)
+        private void RemoveCreatureFromInitiative(object state)
         {
-            var creature = state as Creature;
-
+            InitiativeCreatureViewModel creature = state as InitiativeCreatureViewModel;
+            InitiativeCreatures.Remove(creature);
+            RaisePropertyChanged("SortedInitiativeCreatures");
+            RaisePropertyChanged("InitiativeCreatures");
         }
 
         #endregion
@@ -315,6 +326,14 @@ namespace DungeonMastersScreen.ViewModel
             get
             {
                 return new RelayCommand(AddNewCreatureToInitiative);
+            }
+        }
+
+        public ICommand RemoveCreatureFromInitiativeCommand
+        {
+            get
+            {
+                return new RelayCommand<object>(RemoveCreatureFromInitiative);
             }
         }
         #endregion
