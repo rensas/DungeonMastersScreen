@@ -16,7 +16,6 @@
         </ResourceDictionary>
     </Page.Resources>
     <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="LightGoldenrodYellow">
-        <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Text="{Binding PageTitle}" />
         <StackPanel Orientation="Vertical" DockPanel.Dock="Left" MinWidth="250" MaxWidth="400" HorizontalAlignment="Left" Margin="15,15,0,0">
             <Label Content="Player Characters" FontWeight="Bold" FontSize="24"/>
             <ListView ItemsSource="{Binding PlayerCharacters}" x:Name="PCList">
@@ -62,7 +61,7 @@
                 <TextBox Text="{Binding NewCreatureInitiative, Mode=TwoWay}" Grid.Row="2" Grid.Column="1" Width="25" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
                 <Label Content="Disposition:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"/>
-                <ComboBox ItemsSource="{Binding Dispositions}" SelectedItem="{Binding SelectedDisposition, Mode=TwoWay}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100"/>
+                <ComboBox ItemsSource="{Binding Dispositions}" SelectedItem="{Binding SelectedDisposition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100"/>
             </Grid>
             <Button Command="{Binding AddNewCreatureCommand}" Content="Add Creature" Width="80" HorizontalAlignment="Left"/>
         </StackPanel>

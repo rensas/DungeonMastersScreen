@@ -282,7 +282,6 @@ namespace DungeonMastersScreen.ViewModel
                 NewCreatureInitiative = null;
                 NewCreatureHP = null;
                 NewCreatureName = "";
-                SelectedDisposition = "";
             }
         }
 

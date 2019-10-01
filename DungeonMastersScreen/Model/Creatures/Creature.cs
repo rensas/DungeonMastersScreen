@@ -10,6 +10,7 @@ namespace DungeonMastersScreen.Model.Creatures
 {
     public abstract class Creature : ObservableObject
     {
+        public Guid? Id { get; set; }
         public string Name { get; set; }
         public int Initiative { get; set; }
         public int MaxHP { get; set; }
