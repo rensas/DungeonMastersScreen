@@ -86,9 +86,13 @@
     <Compile Include="ViewModel\ChildViewModel\InitiativeCreatureViewModel.cs" />
     <Compile Include="ViewModel\CombatTrackerViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\PlayerCharacterManagerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\CombatTrackerPage.xaml.cs">
       <DependentUpon>CombatTrackerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\PlayerCharacterManagerPage.xaml.cs">
+      <DependentUpon>PlayerCharacterManagerPage.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -103,6 +107,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\CombatTrackerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\PlayerCharacterManagerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

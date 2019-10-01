@@ -51,9 +51,22 @@ namespace DungeonMastersScreen.ViewModel
             }
         }
 
+        public ICommand NavToPlayerCharManagerCommand
+        {
+            get
+            {
+                return new RelayCommand(() => NavigateToPlayerCharManager());
+            }
+        }
+
         private void NavigateToCombatTracker()
         {
             _navigationService.NavigateTo(ViewModelLocator.CombatTrackerPageKey);
+        }
+
+        private void NavigateToPlayerCharManager()
+        {
+            _navigationService.NavigateTo(ViewModelLocator.PlayerCharacterManagerPageKey);
         }
     }
 }

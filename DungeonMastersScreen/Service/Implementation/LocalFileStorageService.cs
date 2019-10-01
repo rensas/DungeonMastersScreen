@@ -28,6 +28,10 @@ namespace DungeonMastersScreen.Service.Implementation
                                  Environment.SpecialFolder.CommonApplicationData
                              );
             _filePath = Path.Combine(path, "DungeonMastersScreen");
+
+            if (!Directory.Exists(_filePath)) {
+                Directory.CreateDirectory(_filePath);
+            }
         }
         public List<PlayerCharacter> RetrievePlayerCharacters()
         {

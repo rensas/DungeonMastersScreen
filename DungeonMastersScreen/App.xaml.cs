@@ -31,7 +31,7 @@ namespace DungeonMastersScreen
             {
                 _navigationService = new FrameNavigationService();
                 _navigationService.Configure(ViewModelLocator.CombatTrackerPageKey, new Uri("./View/CombatTrackerPage.xaml", UriKind.Relative));
-
+                _navigationService.Configure(ViewModelLocator.PlayerCharacterManagerPageKey, new Uri("./View/PlayerCharacterManagerPage.xaml", UriKind.Relative));
 
                 SimpleIoc.Default.Register<INavigationService>(() => _navigationService);
             }

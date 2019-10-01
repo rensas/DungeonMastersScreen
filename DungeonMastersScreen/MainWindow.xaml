@@ -13,6 +13,7 @@
     <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel x:Name="ControlBar" Orientation="Vertical" Width="60" DockPanel.Dock="Left" VerticalAlignment="Stretch">
             <Button Background="{StaticResource CrossedSwords}" FontWeight="ExtraBold" Width="50" Height="50" HorizontalAlignment="Center" Margin="5,5,5,0" Command="{Binding NavToCombatTrackerCommand}"/>
+            <Button Content="PCM" FontWeight="ExtraBold" Width="50" Height="50" HorizontalAlignment="Center" Margin="5,5,5,0" Command="{Binding NavToPlayerCharManagerCommand}"/>
         </StackPanel>
         <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0" Stroke="Black" DockPanel.Dock="Left" />
         <Frame x:Name="MainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Left" Background="LightCyan"/>

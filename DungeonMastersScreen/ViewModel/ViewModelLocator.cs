@@ -14,6 +14,7 @@
 
 using CommonServiceLocator;
 using DungeonMastersScreen.Service.Implementation;
+using DungeonMastersScreen.Service.Interface;
 using DungeonMastersScreen.View;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
@@ -30,9 +31,11 @@ namespace DungeonMastersScreen.ViewModel
 
         public const string MainPageKey = nameof(MainWindow);
         public const string CombatTrackerPageKey = nameof(CombatTrackerPage);
+        public const string PlayerCharacterManagerPageKey = nameof(PlayerCharacterManagerPage);
 
 
         public CombatTrackerViewModel CombatTrackerVM => SimpleIoc.Default.GetInstance<CombatTrackerViewModel>();
+        public PlayerCharacterManagerViewModel PlayerCharManagerVM => SimpleIoc.Default.GetInstance<PlayerCharacterManagerViewModel>();
         public MainViewModel Main => SimpleIoc.Default.GetInstance<MainViewModel>();
         /// <summary>
         /// Initializes a new instance of the ViewModelLocator class.
@@ -45,6 +48,9 @@ namespace DungeonMastersScreen.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<CombatTrackerViewModel>();
+            SimpleIoc.Default.Register<PlayerCharacterManagerViewModel>();
+
+            SimpleIoc.Default.Register<ILocalStorageService, LocalFileStorageService>();
         }
         
         public static void Cleanup()
