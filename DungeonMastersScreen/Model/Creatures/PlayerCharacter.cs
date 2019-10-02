@@ -8,5 +8,9 @@ namespace DungeonMastersScreen.Model.Creatures
 {
     public class PlayerCharacter : Creature
     {
+        public PlayerCharacter()
+        {
+            InitiativeColor = Types.InitiativeColorType.LG;
+        }
     }
 }

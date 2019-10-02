@@ -23,6 +23,7 @@ namespace DungeonMastersScreen.Model.Creatures
         public int Strength { get; set; }
         public DispositionType DispositionToPCs { get; set; }
         public CreatureType CreatureType { get; set; }
+        public InitiativeColorType InitiativeColor { get; set; }
 
         public void Heal(int healAmount)
         {

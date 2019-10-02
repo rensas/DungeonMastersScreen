@@ -28,11 +28,16 @@ namespace DungeonMastersScreen.ViewModel
         {
             _navigationService = navigationService;
             _localStorageService = storageService;
-            InitiableCreatures = GetInitiableCreatures();
-            PlayerCharacters = GetPlayerCharacters();
             InitiativeCreatures = new List<InitiativeCreatureViewModel>();
 
+            MonsterColorQueue = new Queue<InitiativeColorType>();
+            MonsterColorQueue.Enqueue(InitiativeColorType.R);
+            MonsterColorQueue.Enqueue(InitiativeColorType.G);
+            MonsterColorQueue.Enqueue(InitiativeColorType.Y);
+            MonsterColorQueue.Enqueue(InitiativeColorType.B);
+
             PageTitle = "Combat tracker page";
+            NumberOfNewCreature = 1;
         }
 
         #region Properties
@@ -49,6 +54,29 @@ namespace DungeonMastersScreen.ViewModel
                     return;
                 _pageTitle = value;
                 RaisePropertyChanged("ExampleValue");
+            }
+        }
+
+        private Queue<InitiativeColorType> _colorQueue;
+        public Queue<InitiativeColorType> MonsterColorQueue
+        {
+            get
+            {
+                return _colorQueue;
+            } set
+            {
+                if (_colorQueue == value)
+                    return;
+                _colorQueue = value;
+                RaisePropertyChanged("ColorQueue");
+            }
+        }
+
+        public InitiativeColorType NextMonsterColor
+        {
+            get
+            {
+                return GetNextMonsterColor();
             }
         }
 
@@ -148,6 +176,22 @@ namespace DungeonMastersScreen.ViewModel
             }
         }
 
+        private int _numberOfNewCreature;
+        public int NumberOfNewCreature
+        {
+            get
+            {
+                return _numberOfNewCreature;
+            }
+            set
+            {
+                if (_numberOfNewCreature == value)
+                    return;
+                _numberOfNewCreature = value;
+                RaisePropertyChanged("NumberOfNewCreature");
+            }
+        }
+
         public List<string> Dispositions
         {
             get
@@ -223,6 +267,13 @@ namespace DungeonMastersScreen.ViewModel
             return creatures;
         }
 
+        private InitiativeColorType GetNextMonsterColor()
+        {
+            var value = MonsterColorQueue.Dequeue();
+            MonsterColorQueue.Enqueue(value);
+            return value;
+        }
+
         private ObservableCollection<InitiativeCreatureViewModel> GetPlayerCharacters()
         {
             var pcs = _localStorageService.RetrievePlayerCharacters();
@@ -238,23 +289,29 @@ namespace DungeonMastersScreen.ViewModel
         {
             if (!String.IsNullOrWhiteSpace(NewCreatureName) && NewCreatureInitiative != null && NewCreatureHP != null && !String.IsNullOrWhiteSpace(SelectedDisposition))
             {
-                DispositionType dispo = DispositionType.Neutral;
-                Enum.TryParse(SelectedDisposition, out dispo);
-                var creature = new NPC()
+                for(int i = 1; i <= NumberOfNewCreature; i++)
                 {
-                    Name = NewCreatureName,
-                    Initiative = NewCreatureInitiative.Value,
-                    MaxHP = NewCreatureHP.Value,
-                    CurrentHP = NewCreatureHP.Value,
-                    DispositionToPCs = dispo
-                };
-                InitiativeCreatureViewModel creatureVM = new InitiativeCreatureViewModel() { Model = creature };
-                InitiativeCreatures.Add(creatureVM);
+                    DispositionType dispo = DispositionType.Neutral;
+                    Enum.TryParse(SelectedDisposition, out dispo);
+                    var creature = new NPC()
+                    {
+                        Name = NumberOfNewCreature > 1 ? NewCreatureName + " " + i : NewCreatureName,
+                        Initiative = NewCreatureInitiative.Value,
+                        MaxHP = NewCreatureHP.Value,
+                        CurrentHP = NewCreatureHP.Value,
+                        DispositionToPCs = dispo,
+                        InitiativeColor = GetNextMonsterColor()
+                    };
+                    InitiativeCreatureViewModel creatureVM = new InitiativeCreatureViewModel() { Model = creature };
+                    InitiativeCreatures.Add(creatureVM);
+                }
+                
                 RaisePropertyChanged("InitiativeCreatures");
                 RaisePropertyChanged("SortedInitiativeCreatures");
                 NewCreatureInitiative = null;
                 NewCreatureHP = null;
                 NewCreatureName = "";
+                NumberOfNewCreature = 1;
             }
         }
 

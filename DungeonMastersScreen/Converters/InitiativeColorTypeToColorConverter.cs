@@ -10,27 +10,37 @@ using System.Windows.Media;
 
 namespace DungeonMastersScreen.Converters
 {
-    public class DispositionTypeToColorConverter : IValueConverter
+    public class InitiativeColorTypeToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            DispositionType dType = (DispositionType)value;
+            InitiativeColorType dType = (InitiativeColorType)value;
             SolidColorBrush color = new SolidColorBrush(Colors.White);
             switch (dType)
             {
-                case DispositionType.Friendly:
+                case InitiativeColorType.R:
+                    {
+                        color = new SolidColorBrush(Colors.Red);
+                        break;
+                    }
+                case InitiativeColorType.G:
+                    {
+                        color = new SolidColorBrush(Colors.DarkSlateGray);
+                        break;
+                    }
+                case InitiativeColorType.B:
+                    {
+                        color = new SolidColorBrush(Colors.Blue);
+                        break;
+                    }
+                case InitiativeColorType.Y:
+                    {
+                        color = new SolidColorBrush(Colors.Yellow);
+                        break;
+                    }
+                case InitiativeColorType.LG:
                     {
                         color = new SolidColorBrush(Colors.LightGreen);
-                        break;
-                    }
-                case DispositionType.Neutral:
-                    {
-                        color = new SolidColorBrush(Colors.LightGray);
-                        break;
-                    }
-                case DispositionType.Hostile:
-                    {
-                        color = new SolidColorBrush(Colors.IndianRed);
                         break;
                     }
             }

@@ -15,6 +15,7 @@
     <Page.Resources>
         <ResourceDictionary>
             <converters:DispositionTypeToColorConverter x:Key="DispTypeToColorConverter"/>
+            <converters:InitiativeColorTypeToColorConverter x:Key="IniativeColorTypeConverter" />
         </ResourceDictionary>
     </Page.Resources>
     <i:Interaction.Triggers>
@@ -52,6 +53,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75" />
@@ -69,6 +71,9 @@
 
                 <Label Content="Disposition:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"/>
                 <ComboBox ItemsSource="{Binding Dispositions}" SelectedItem="{Binding SelectedDisposition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100"/>
+
+                <Label Content="# To Add:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right"/>
+                <TextBox Text="{Binding NumberOfNewCreature, Mode=TwoWay}" Grid.Row="4" Grid.Column="1" Width="25" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             </Grid>
             <Button Command="{Binding AddNewCreatureCommand}" Content="Add Creature" Width="80" HorizontalAlignment="Left"/>
         </StackPanel>
@@ -89,6 +94,8 @@
                         <DockPanel HorizontalAlignment="Stretch" Height="40">
                             <!-- Right-docked items -->
                             <Button Content="X" Command="{Binding ElementName=InitiativeList, Path=DataContext.RemoveCreatureFromInitiativeCommand}" CommandParameter="{Binding}" FontSize="14" FontWeight="Bold" Width="25" Height="25" Margin="2,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                            <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0,2,4,2" Stroke="Black" DockPanel.Dock="Left" />
+                            <Rectangle Height="25" Width="25" HorizontalAlignment="Center" VerticalAlignment="Center" Stroke="Black" Fill="{Binding Model.InitiativeColor, Converter={StaticResource IniativeColorTypeConverter}}" Margin="2,0,6,0" />
                             <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0,2,4,2" Stroke="Black" DockPanel.Dock="Left" />
                             <TextBlock Text="{Binding Model.Initiative}" FontWeight="Bold" FontSize="24" Width="35" VerticalAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Left"/>
                             <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2,2,4,2" Stroke="Black" DockPanel.Dock="Left" />

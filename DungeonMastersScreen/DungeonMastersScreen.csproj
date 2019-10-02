@@ -74,11 +74,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\DispositionTypeToColorConverter.cs" />
+    <Compile Include="Converters\InitiativeColorTypeToColorConverter.cs" />
     <Compile Include="Model\Creatures\Creature.cs" />
     <Compile Include="Model\Creatures\NPC.cs" />
     <Compile Include="Model\Creatures\PlayerCharacter.cs" />
     <Compile Include="Model\Types\CreatureType.cs" />
     <Compile Include="Model\Types\DispositionType.cs" />
+    <Compile Include="Model\Types\InitiativeColorType.cs" />
     <Compile Include="Service\Implementation\FrameNavigationService.cs" />
     <Compile Include="Service\Implementation\LocalFileStorageService.cs" />
     <Compile Include="Service\Interface\IFrameNavigationService.cs" />
