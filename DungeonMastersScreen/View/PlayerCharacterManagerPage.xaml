@@ -3,19 +3,29 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:command="http://www.galasoft.ch/mvvmlight"
       xmlns:local="clr-namespace:DungeonMastersScreen.View"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       DataContext="{Binding PlayerCharManagerVM, Source={StaticResource Locator}}"
       Title="PlayerCharacterManagerPage">
 
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter" />
+    </Page.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <command:EventToCommand Command="{Binding LoadDataCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="LightGoldenrodYellow">
         <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
             <Label Content="Existing PCs" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
-            <ListView ItemsSource="{Binding PlayerCharacters}" x:Name="PCList">
+            <ListView ItemsSource="{Binding PlayerCharacters}" SelectedItem="{Binding SelectedPlayerCharacter, Mode=TwoWay}" x:Name="PCList" Width="350">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Background" Value="Green"/>
+                        <Setter Property="Background" Value="LightGreen"/>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         <Setter Property="BorderBrush" Value="Gray"/>
                         <Setter Property="BorderThickness" Value="1px" />
@@ -24,34 +34,75 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <DockPanel HorizontalAlignment="Stretch" Height="40">
+                            <Button Content="X" Command="{Binding ElementName=PCList, Path=DataContext.DeletePlayerCharacterCommand}" CommandParameter="{Binding}" FontSize="14" FontWeight="Bold" Width="25" Height="25" Margin="2,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                            <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0,2,4,2" Stroke="Black" DockPanel.Dock="Left" />
                             <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-                            <TextBlock Text="{Binding MaxHP}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" DockPanel.Dock="Right" />
+
+                            <!-- Left-Docked items -->
+                            <TextBlock Text="{Binding MaxHP}" Width="42" FontWeight="Bold" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="1,0,5,0" />
+                            <TextBlock Text="/" FontWeight="Bold" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Right" DockPanel.Dock="Right" />
+                            <TextBlock Text="{Binding CurrentHP}" Width="42" FontWeight="Bold" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" DockPanel.Dock="Right" Margin="0,0,0,0" />
+                            <TextBlock Text="HP: " Width="34" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right" DockPanel.Dock="Right" />
                         </DockPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <Button Content="Long Rest" Width="80" HorizontalAlignment="Left" VerticalAlignment="Top" Command="{Binding LongRestCommand}" Margin="2,10,0,0"/>
         </StackPanel>
         <Rectangle DockPanel.Dock="Left" VerticalAlignment="Stretch" Width="1" Margin="4,2,4,2" Stroke="Black" />
-        <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
-            <Grid>
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Left" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <Label Content="Create a new PC" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Grid Margin="0,30,0,0" VerticalAlignment="Top">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="100"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Row="0" Grid.Column="0" Content="Name: " />
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding NewCharName, Mode=TwoWay}" />
+                <Label Grid.Row="0" Grid.Column="0" Content="Name: " Margin="2" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Width="100" Text="{Binding NewCharName, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Left" />
 
-                <Label Grid.Row="1" Grid.Column="0" Content="Max HP: " />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NewCharMaxHP, Mode=TwoWay}" />
+                <Label Grid.Row="1" Grid.Column="0" Content="Max HP: " Margin="2" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Width="100" Text="{Binding NewCharMaxHP, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
-                <Button Grid.Row="2" Grid.ColumnSpan="2" Content="Save PC" Command="{Binding SaveNewPlayerCharCommand}" />
+                <Label Grid.Row="2" Grid.Column="0" Content="Current HP: " Margin="2" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Width="100" Text="{Binding NewCharCurrentHP, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+
+                <Button Grid.Row="3" Grid.ColumnSpan="2" Content="Save PC" Command="{Binding SaveNewPlayerCharCommand}" Width="50" />
+                
             </Grid>
+            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="1" Margin="0,2,4,2" Stroke="Black"/>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch" Visibility="{Binding EditPCVisible, Converter={StaticResource VisibleIfTrueConverter}}" >
+                <Label Content="Edit Existing PC" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                <Grid Margin="0,30,0,0" VerticalAlignment="Top">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Content="Name: " Margin="2" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Width="100" Text="{Binding SelectedPlayerCharacter.Name, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+
+                    <Label Grid.Row="1" Grid.Column="0" Content="Max HP: " Margin="2" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Width="100" Text="{Binding SelectedPlayerCharacter.MaxHP, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" Content="Current HP: " Margin="2" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Width="100" Text="{Binding SelectedPlayerCharacter.CurrentHP, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+
+                    <Button Grid.Row="3" Grid.ColumnSpan="2" Content="Save Changes" Command="{Binding SaveExistingPlayerCharCommand}" Width="90" />
+                </Grid>
+            </StackPanel>
         </StackPanel>
     </DockPanel>
 </Page>

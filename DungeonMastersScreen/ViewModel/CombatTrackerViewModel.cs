@@ -1,5 +1,6 @@
 ﻿using DungeonMastersScreen.Model.Creatures;
 using DungeonMastersScreen.Model.Types;
+using DungeonMastersScreen.Service.Interface;
 using DungeonMastersScreen.ViewModel.ChildViewModel;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -18,13 +19,15 @@ namespace DungeonMastersScreen.ViewModel
     {
         #region Services
         private INavigationService _navigationService;
+        private ILocalStorageService _localStorageService;
 
         #endregion
 
 
-        public CombatTrackerViewModel(INavigationService navigationService)
+        public CombatTrackerViewModel(INavigationService navigationService, ILocalStorageService storageService)
         {
             _navigationService = navigationService;
+            _localStorageService = storageService;
             InitiableCreatures = GetInitiableCreatures();
             PlayerCharacters = GetPlayerCharacters();
             InitiativeCreatures = new List<InitiativeCreatureViewModel>();
@@ -182,6 +185,10 @@ namespace DungeonMastersScreen.ViewModel
 
         #region Methods
 
+        private void LoadData()
+        {
+            PlayerCharacters = GetPlayerCharacters();
+        }
         private ObservableCollection<Creature> GetInitiableCreatures()
         {
             ObservableCollection<Creature> creatures = new ObservableCollection<Creature>();
@@ -218,49 +225,15 @@ namespace DungeonMastersScreen.ViewModel
 
         private ObservableCollection<InitiativeCreatureViewModel> GetPlayerCharacters()
         {
-            var pcs = new ObservableCollection<PlayerCharacter>();
-            pcs.Add(new PlayerCharacter()
-            {
-                Name = "Luthor",
-                MaxHP = 28,
-                CurrentHP = 28,
-                DispositionToPCs = DispositionType.Friendly
-            });
-            pcs.Add(new PlayerCharacter()
-            {
-                Name = "Zil",
-                MaxHP = 19,
-                CurrentHP = 19,
-                DispositionToPCs = DispositionType.Friendly
-            });
-            pcs.Add(new PlayerCharacter()
-            {
-                Name = "Sly",
-                MaxHP = 18,
-                CurrentHP = 18,
-                DispositionToPCs = DispositionType.Friendly
-            });
-            pcs.Add(new PlayerCharacter()
-            {
-                Name = "Elroy",
-                MaxHP = 14,
-                CurrentHP = 14,
-                DispositionToPCs = DispositionType.Friendly
-            });
-            pcs.Add(new PlayerCharacter()
-            {
-                Name = "Saphyra",
-                MaxHP = 21,
-                CurrentHP = 21,
-                DispositionToPCs = DispositionType.Friendly
-            });
-            var pcvm = new ObservableCollection<InitiativeCreatureViewModel>();
+            var pcs = _localStorageService.RetrievePlayerCharacters();
+            var pcvm = new List<InitiativeCreatureViewModel>();
             foreach (PlayerCharacter pc in pcs)
             {
                 pcvm.Add(new InitiativeCreatureViewModel() { Model = pc });
             }
-            return pcvm;
+            return new ObservableCollection<InitiativeCreatureViewModel>(pcvm.OrderBy(x=>x.Model.Name).ToList());
         }
+
         private void AddNewCreatureToInitiative()
         {
             if (!String.IsNullOrWhiteSpace(NewCreatureName) && NewCreatureInitiative != null && NewCreatureHP != null && !String.IsNullOrWhiteSpace(SelectedDisposition))
@@ -308,9 +281,32 @@ namespace DungeonMastersScreen.ViewModel
             RaisePropertyChanged("InitiativeCreatures");
         }
 
+        private void SavePCStatusAndClearInitiative()
+        {
+            foreach (InitiativeCreatureViewModel vm in InitiativeCreatures)
+            {
+                var modelType = vm.Model.GetType();
+                if (modelType == typeof(PlayerCharacter))
+                {
+                    _localStorageService.StorePlayerCharacter(vm.Model as PlayerCharacter);
+                }
+            }
+            InitiativeCreatures.Clear();
+            RaisePropertyChanged("InitiativeCreatures");
+            RaisePropertyChanged("SortedInitiativeCreatures");
+        }
+
         #endregion
 
         #region Commands
+
+        public ICommand LoadDataCommand
+        {
+            get
+            {
+                return new RelayCommand(LoadData);
+            }
+        }
 
         public ICommand AddPlayerCharacterCommand
         {
@@ -325,6 +321,14 @@ namespace DungeonMastersScreen.ViewModel
             get
             {
                 return new RelayCommand(AddNewCreatureToInitiative);
+            }
+        }
+
+        public ICommand SavePCStatusAndClearInitiativeCommand
+        {
+            get
+            {
+                return new RelayCommand(SavePCStatusAndClearInitiative);
             }
         }
 

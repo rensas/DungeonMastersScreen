@@ -1,4 +1,5 @@
 ﻿using DungeonMastersScreen.Model.Creatures;
+using DungeonMastersScreen.Model.Types;
 using DungeonMastersScreen.Service.Interface;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -25,7 +26,7 @@ namespace DungeonMastersScreen.ViewModel
             _navigationService = navService;
             _localStorageService = localStorageService;
 
-            LoadPlayerData();
+            //LoadPlayerData();
         }
 
         #region Properties
@@ -78,60 +79,145 @@ namespace DungeonMastersScreen.ViewModel
             }
         }
 
-        /*
-        private T _name;
-        public T Name
+        private int _newCharCurrentHP;
+        public int NewCharCurrentHP
         {
             get
             {
-                return _name;
+                return _newCharCurrentHP;
             }
             set
             {
-                if (_name == value)
+                if (_newCharCurrentHP == value)
                     return;
-                _name = value;
-                RaisePropertyChanged("Name");
+                _newCharCurrentHP = value;
+                RaisePropertyChanged("NewCharCurrentHP");
             }
         }
-        */
 
+        private PlayerCharacter _selectedPlayerCharacter;
+        public PlayerCharacter SelectedPlayerCharacter
+        {
+            get
+            {
+                return _selectedPlayerCharacter;
+            }
+            set
+            {
+                if (_selectedPlayerCharacter == value)
+                    return;
+                _selectedPlayerCharacter = value;
+                RaisePropertyChanged("SelectedPlayerCharacter");
+                RaisePropertyChanged("EditPCVisible");
+            }
+        }
 
+        public bool EditPCVisible
+        {
+            get
+            {
+                return SelectedPlayerCharacter != null;
+            }
+        }
 
         #endregion
 
         #region Methods
 
+        public void LoadData()
+        {
+            LoadPlayerData();
+        }
+
+        private void DoLongRest()
+        {
+            foreach (PlayerCharacter pc in PlayerCharacters)
+            {
+                pc.CurrentHP = pc.MaxHP;
+                _localStorageService.StorePlayerCharacter(pc);
+            }
+            LoadPlayerData();
+        }
         private void LoadPlayerData()
         {
             PlayerCharacters = _localStorageService.RetrievePlayerCharacters();
+            RaisePropertyChanged("PlayerCharacters");
         }
 
         private void SaveNewPlayerCharacter()
         {
-            if (!String.IsNullOrWhiteSpace(NewCharName) && NewCharMaxHP > 0)
+            if (!String.IsNullOrWhiteSpace(NewCharName) && NewCharMaxHP > 0 && NewCharCurrentHP > 0)
             {
                 PlayerCharacter pc = new PlayerCharacter()
                 {
                     Name = NewCharName,
-                    MaxHP = NewCharMaxHP
+                    MaxHP = NewCharMaxHP,
+                    CurrentHP = NewCharCurrentHP,
+                    DispositionToPCs = DispositionType.Friendly
                 };
                 _localStorageService.StorePlayerCharacter(pc);
                 NewCharMaxHP = 0;
+                NewCharCurrentHP = 0;
                 NewCharName = "";
                 LoadPlayerData();
             }
+        }
+
+        private void SaveExistingPlayerCharacter()
+        {
+            _localStorageService.StorePlayerCharacter(SelectedPlayerCharacter);
+            SelectedPlayerCharacter = null;
+            LoadPlayerData();
+        }
+
+        private void DeletePlayerCharacter(object state)
+        {
+            PlayerCharacter pc = state as PlayerCharacter;
+            _localStorageService.DeletePlayerCharacter(pc);
+            LoadPlayerData();
         }
 
         #endregion
 
         #region Commands
 
+        public ICommand LoadDataCommand
+        {
+            get
+            {
+                return new RelayCommand(LoadData);
+            }
+        }
+
+        public ICommand LongRestCommand
+        {
+            get
+            {
+                return new RelayCommand(DoLongRest);
+            }
+        }
+
         public ICommand SaveNewPlayerCharCommand
         {
             get
             {
                 return new RelayCommand(SaveNewPlayerCharacter);
+            }
+        }
+
+        public ICommand SaveExistingPlayerCharCommand
+        {
+            get
+            {
+                return new RelayCommand(SaveExistingPlayerCharacter);
+            }
+        }
+
+        public ICommand DeletePlayerCharacterCommand
+        {
+            get
+            {
+                return new RelayCommand<object>(DeletePlayerCharacter);
             }
         }
 

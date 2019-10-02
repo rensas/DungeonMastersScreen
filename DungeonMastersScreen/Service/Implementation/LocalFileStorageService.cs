@@ -84,7 +84,11 @@ namespace DungeonMastersScreen.Service.Implementation
         public bool DeletePlayerCharacter(PlayerCharacter pc)
         {
             var existingPcs = RetrievePlayerCharacters();
-            return existingPcs.Remove(pc);
+            var removed = existingPcs.Remove(existingPcs.Where(x => x.Id == pc.Id).First());
+            var jsonToWrite = JsonConvert.SerializeObject(existingPcs);
+            var path = Path.Combine(_filePath, pcFileName);
+            File.WriteAllText(path, jsonToWrite);
+            return removed;
         }
     }
 }
